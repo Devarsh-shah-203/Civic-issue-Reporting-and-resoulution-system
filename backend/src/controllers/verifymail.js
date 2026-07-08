@@ -1,49 +1,6 @@
-
-import bcrypt from "bcryptjs";
 import User from "../models/user.js";
-import { resetToken as generateResetToken } from "../utils/generateToken.js";
-import SendVerificationCode  from "../utils/email.service.js";
-
-export const sendVerificationCode = async (req, res, next) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required.",
-      });
-    }
-
-    const user = await User.findOne({ email });
-
-
-
-    // Generate OTP
-    const code = await SendVerificationCode(email);
-
-    if (!code) {
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send verification code.",
-      });
-    }
-
-    // Store hashed OTP
-    user.resetPasswordToken = await bcrypt.hash(code, 10);
-    user.resetCodeExpiry = Date.now() + 5 * 60 * 1000;
-
-    await user.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Verification code sent successfully.",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
+import { resetToken } from "../utils/generateToken.js";
+import { SendVerificationCode } from "../services/email.service.js";
 
 export const verifyOtp = async (req, res, next) => {
   try {
@@ -65,7 +22,7 @@ export const verifyOtp = async (req, res, next) => {
     ) {
       return res.status(400).json({
         success: false,
-        message: "Invalid or expired verification code.",
+        message: "Invalid or expired OTP.",
       });
     }
 
@@ -76,33 +33,77 @@ export const verifyOtp = async (req, res, next) => {
 
       return res.status(400).json({
         success: false,
-        message: "Verification code has expired.",
+        message: "OTP has expired.",
       });
     }
 
-    const isValid = await bcrypt.compare(
-      OTP,
-      user.resetPasswordToken
-    );
-
-    if (!isValid) {
+    if (String(OTP) !== user.resetPasswordToken) {
       return res.status(400).json({
         success: false,
-        message: "Invalid verification code.",
+        message: "Invalid OTP.",
       });
     }
 
-    // OTP verified
-    user.resetPasswordToken = undefined;
-    user.resetCodeExpiry = undefined;
-    await user.save();
+    // Generate Reset JWT
+    const token = resetToken(user._id);
 
-    const resetToken = generateResetToken(user._id);
+    // Store Reset JWT
+    user.resetPasswordToken = token;
+    user.resetCodeExpiry = Date.now() + 10 * 60 * 1000; // valid for 10 mins
+
+    await user.save();
 
     return res.status(200).json({
       success: true,
-      message: "Verification successful.",
-      resetToken,
+      message: "OTP verified successfully.",
+      resetPasswordToken: token,
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const sendVerificationCode = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required.",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Send OTP email
+    const code = await SendVerificationCode(email);
+
+    if (!code) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send verification code.",
+      });
+    }
+
+    // Save OTP
+    user.resetPasswordToken = String(code);
+    user.resetCodeExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Verification code sent successfully.",
     });
   } catch (error) {
     next(error);

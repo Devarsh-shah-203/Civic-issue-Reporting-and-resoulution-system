@@ -20,7 +20,7 @@ export const generateRefreshToken = (id) => {
   );
 };
 
-const resetToken =  (id) => {
+export const resetToken =  (id) => {
   return jwt.sign({id}, process.env.RESET_JWT_SECRET, {
      expiresIn: process.env.RESET_TOKEN_EXPIRY ,
 }); };

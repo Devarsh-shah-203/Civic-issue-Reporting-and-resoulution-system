@@ -9,6 +9,7 @@ logout
 from "../controllers/authController.js";
 
 import { sendVerificationCode, verifyOtp } from "../controllers/verifymail.js";
+import reset from "../controllers/resetPassword.controller.js";
 
 const router = express.Router();
 
@@ -39,6 +40,7 @@ logout
 
 router.post("/forgot-password", sendVerificationCode);
 router.post("/verify-otp", verifyOtp);
+router.post("/reset", reset);
 
 
 export default router;
