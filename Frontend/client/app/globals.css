@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-surface-sunk text-ink font-body antialiased;
+}
+
+html.dark body {
+  @apply bg-darksurface text-surface-sunk;
+}
+
+/* ---- Signature element: the "report ticket" ----
+   Every complaint reads like an official permit / ticket stub,
+   perforated on the left edge, with a rotated status stamp. */
+
+.ticket {
+  position: relative;
+  @apply bg-surface rounded-lg shadow-card border border-surface-border overflow-hidden;
+}
+
+html.dark .ticket {
+  @apply bg-darksurface-raised border-darksurface-border;
+}
+
+.ticket::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background-image: radial-gradient(circle, transparent 3px, currentColor 3.2px);
+  background-size: 100% 14px;
+  color: theme("colors.surface.sunk");
+}
+
+html.dark .ticket::before {
+  color: theme("colors.darksurface.DEFAULT");
+}
+
+.stamp {
+  @apply inline-flex items-center gap-1.5 rounded-full border-2 px-3 py-1 text-xs font-mono font-semibold uppercase tracking-wide;
+  transform: rotate(-6deg);
+}
+
+.stamp-pending {
+  @apply border-signal text-signal-dark bg-signal/10;
+}
+
+.stamp-progress {
+  @apply border-civic-400 text-civic-600 bg-civic-50;
+}
+
+.stamp-resolved {
+  @apply border-resolved text-resolved-dark bg-resolved/10;
+}
+
+.stamp-rejected {
+  @apply border-urgent text-urgent-dark bg-urgent/10;
+}
+
+.ticket-id {
+  @apply font-mono text-xs text-ink-muted tracking-widest;
+}
+
+/* Focus visibility */
+:focus-visible {
+  outline: 2px solid theme("colors.civic.400");
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.leaflet-container {
+  @apply rounded-lg z-0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-civic-200 rounded-full;
+}
