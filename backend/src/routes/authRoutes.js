@@ -8,6 +8,7 @@ logout
 }
 from "../controllers/authController.js";
 
+import { sendVerificationCode, verifyOtp } from "../controllers/verifymail.js";
 
 const router = express.Router();
 
@@ -36,6 +37,8 @@ router.post(
 logout
 );
 
+router.post("/forgot-password", sendVerificationCode);
+router.post("/verify-otp", verifyOtp);
 
 
 export default router;

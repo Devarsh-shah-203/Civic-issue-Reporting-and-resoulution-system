@@ -35,7 +35,27 @@ const userSchema = new mongoose.Schema({
             "worker"
         ],
         default:"citizen"
-    }
+    },
+
+    passwordChangedAt: {
+        type: Date,
+      },
+  
+      resetPasswordToken: {
+        type: String,
+        select: false,
+      },
+  
+      resetCodeExpiry: {
+        type:Date,
+      },
+  
+      refreshToken:{
+          type:String,
+          select:false
+      },
+
+
 
 
 },{
