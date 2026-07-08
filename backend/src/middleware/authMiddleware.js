@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const authMiddleware = (req, res, next) => {
+const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (
@@ -19,9 +19,9 @@ const authMiddleware = (req, res, next) => {
       token,
       process.env.ACCESS_TOKEN_SECRET
     );
-
+   
     req.user = decoded;
-
+    console.log("Authenticated user:", req.user);
     next();
   } catch (error) {
     return res.status(401).json({
@@ -30,4 +30,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-export default authMiddleware;
+export default authenticate;
