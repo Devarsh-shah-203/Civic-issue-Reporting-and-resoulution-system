@@ -16,7 +16,8 @@ export const registerUser = async(data)=>{
     const {
         name,
         email,
-        password
+        password,
+        role
     } = data;
 
 
@@ -47,7 +48,9 @@ export const registerUser = async(data)=>{
 
         email,
 
-        password:hashedPassword
+        password:hashedPassword,
+
+        role
 
     });
 
@@ -70,7 +73,8 @@ export const loginUser = async(data)=>{
 
     const {
         email,
-        password
+        password,
+        role
     } = data;
 
 

@@ -6,7 +6,7 @@ import morgan from "morgan";
 
 import authRoutes from "./routes/authRoutes.js";
 import complaintRoutes from "./routes/complaint.routes.js";
-
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -37,7 +37,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/complaints", complaintRoutes);
-
+app.use("/api/admin", adminRoutes);
 
 
 app.get("/",(req,res)=>{

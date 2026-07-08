@@ -8,7 +8,7 @@ const authenticate = (req, res, next) => {
     !authHeader.startsWith("Bearer ")
   ) {
     return res.status(401).json({
-      message: "Access denied",
+      message: "Access denied123",
     });
   }
 
