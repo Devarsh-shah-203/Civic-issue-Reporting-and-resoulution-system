@@ -53,7 +53,7 @@ export const login = async(req,res)=>{
 
 
         const accessToken =
-        generateAccessToken(user._id);
+        generateAccessToken(user._id,user.email);
 
 
         const refreshToken =
